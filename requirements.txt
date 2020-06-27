@@ -1,0 +1,5 @@
+xlrd>=1.2.0
+numpy>=1.10.4
+argparse>=1.1.0
+styleframe>=0.1.6
+openpyxl>=2.8.0
