@@ -64,6 +64,7 @@ class TableParserPlan:
 
             # Check None and invalid fields
             # print(op_discipl)
+            ok = True
             if isNone(op_real):
                 continue
             elif isNone(op_discipl):
@@ -71,12 +72,16 @@ class TableParserPlan:
                 exit(0)
             else:
                 if isNone(op_name):
+                    ok=False
                     self.__printError("[VALUE WARNING]", index, op_name, "Наименование ОП")
                 if isNone(op_real):
+                    ok=False
                     self.__printError("[VALUE WARNING]", index, op_real, "Реализатор ОП")
                 if isNone(op_supvisor):
+                    ok=False
                     self.__printError("[VALUE WARNING]", index, op_supvisor, "Руководитель ОП")
                 if isNone(op_module):
+                    ok=False
                     self.__printError("[VALUE WARNING]", index, op_module, "Модуль")
 
                 # Check OP In dict
@@ -129,6 +134,7 @@ class TableParserPlan:
                 valid_disp = ((sum_calc_ze!=0.0 and sum_calc_ze < np.ceil(op_ze/4))
                               or ("Практика" in op_module or "практика" in op_module))
                 if not valid_disp:
+                    ok=False
                     self.__printError("[VALUE WARNING]", index, np.ceil(op_ze/4), "calculated ze = "+ str(sum_calc_ze))
 
                 valid_disp_str = 1 if valid_disp==True else 0
@@ -138,7 +144,7 @@ class TableParserPlan:
                                   "teachers_lec": teacher_lec_list,
                                  "teachers_prac": teacher_prac_list,
                                  "comments": op_comments,
-                                 "valid_disc": valid_disp_str}
+                                 "valid_disc": ok}
 
                 self.__out_dict_json[op_name][self.__disc_field_name].append(new_discipl)
 
@@ -146,6 +152,7 @@ class TableParserPlan:
         # Serializing json
         json_str_out = json.dumps(self.__out_dict_json, indent = 4, ensure_ascii=False)
         f = open(out_filename, "w")
+        print("[COMPLETE] : Write json output in: ", out_filename)
         f.write(json_str_out)
         f.close()
 
