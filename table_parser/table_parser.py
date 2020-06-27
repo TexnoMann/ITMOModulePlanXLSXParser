@@ -113,22 +113,14 @@ class TableParserPlan:
                     if isFloat(cell_rasp):
                         sum_calc_ze+= float(cell_rasp)
                         list_period_rasp.append(cell_rasp)
+                    elif cell_rasp!="":
+                        list_period_rasp.append(cell_rasp)
+                        sum_calc_ze+=1
+                    elif color_in_hex != "00000000" and color_in_hex != 0:
+                        list_period_rasp.append(1)
+                        sum_calc_ze+=1
                     else:
-                        cell_rasp_list = re.split(' ', cell_rasp)
-
-                        for n in cell_rasp_list:
-                            if isFloat(n):
-                                cell_rasp = float(n)
-                                sum_calc_ze+= float(n)
-                                break
-                            elif color_in_hex != "00000000" and color_in_hex != 0:
-                                cell_rasp = 1.0
-                                sum_calc_ze+=1
-                                break
-                        if cell_rasp!="":
-                            list_period_rasp.append(cell_rasp)
-                        else:
-                            list_period_rasp.append(0)
+                        list_period_rasp.append(0)
 
                 # Check valid disciplines plan.
                 valid_disp = ((sum_calc_ze!=0.0 and sum_calc_ze < np.ceil(op_ze/4))
