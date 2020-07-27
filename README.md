@@ -14,9 +14,13 @@ pip3 install -r requirements.txt
 ```
 
 ## Запуск
-Для запуска скрипта из консоли(Ubuntu):
+Для запуска скрипта парсинга плана из консоли(Ubuntu):
 ```bash
 python3 parse_json.py [-in|--input Путь до xlsx файла] [-out|--output Путь для сохранения сгенерированного JSON]
+```
+Для запуска скрипта парсинга плана из консоли(Ubuntu):
+```bash
+python3 parse_rooms_json.py [-in|--input Путь до docx файла] [-out|--output Путь до выходного json файла с занятостью] [-rinfo|--rooms_info Путь до json файла с информацией об аудиториях] [-tc|--time_config Путь до конфига с таблицей времени]
 ```
 
 ## License
