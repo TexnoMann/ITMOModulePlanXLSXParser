@@ -28,6 +28,10 @@ class TableParserPlan:
     def __init__(self, input_filename, start_row):
         #  Name for json fields
         self.__op_start_row = start_row
+        fc = re.split('\(|\)', input_filename)
+        print(fc[1])
+        self.__fac = fc[1]
+        self.__err_log=""
         self.__meta_field_name = "meta"
         self.__disc_field_name = "disciplines"
         self.__out_dict_json={}
@@ -39,6 +43,7 @@ class TableParserPlan:
 
     def parse(self):
         index = 0
+        self.__invalid_cells=0
         for row in self.__sh.rows:
             index+=1
             # Skip initial rows
@@ -105,10 +110,13 @@ class TableParserPlan:
 
                 #List of marked period cells
                 list_period_rasp =[]
+                list_colors_cell =[]
+
 
                 for cell_rasp in op_discipl_periods:
                     #  Get a cell color
                     color_in_hex = cell_rasp.fill.start_color.index
+                    list_colors_cell.append(color_in_hex)
                     cell_rasp = noneConvert(cell_rasp.value)
                     if isFloat(cell_rasp):
                         sum_calc_ze+= float(cell_rasp)
@@ -116,20 +124,28 @@ class TableParserPlan:
                     elif cell_rasp!="":
                         list_period_rasp.append(cell_rasp)
                         sum_calc_ze+=1
-                    elif color_in_hex != "00000000" and color_in_hex != 0:
+                    elif color_in_hex != "00000000" and color_in_hex != 0 and color_in_hex != "FFFFFFFF":
                         list_period_rasp.append(1)
                         sum_calc_ze+=1
                     else:
                         list_period_rasp.append(0)
+                if "FFFFFFFF" in list_colors_cell:
+                    self.__invalid_cells+=1
 
                 # Check valid disciplines plan.
-                valid_disp = ((sum_calc_ze!=0.0 and sum_calc_ze < np.ceil(op_ze/4))
+                valid_disp = ((sum_calc_ze!=0.0 and sum_calc_ze <= np.ceil(op_ze/3))
                               or ("Практика" in op_module or "практика" in op_module))
                 if not valid_disp:
                     ok=False
-                    self.__printError("[VALUE WARNING]", index, np.ceil(op_ze/4), "calculated ze = "+ str(sum_calc_ze))
+                    self.__printError("[VALUE WARNING]", index, np.ceil(op_ze/3), "calculated ze = "+ str(sum_calc_ze) +", colors: "+str(list_colors_cell))
+                    if sum_calc_ze!=0.0:
+                        human_sum_calc_ze = (int)(sum_calc_ze) if sum_calc_ze/(1.0*((int)(sum_calc_ze))) == 1.0 else sum_calc_ze
+                    else:
+                        human_sum_calc_ze = 0
+                    self.__err_log+=(self.__fac+": "+op_name + ", " + op_supvisor + ", " + op_discipl+ ", Указано з.е: "+str(op_ze) +", Закрашено ячеек: " + str(human_sum_calc_ze) +"\n")
 
                 valid_disp_str = 1 if valid_disp==True else 0
+
                 new_discipl = {"name": op_discipl, "module": op_module, "ze": op_ze,
                                 "kcp": op_kcp, "h_lec": op_hours_lec, "h_lab": op_hours_lab,
                                  "h_prac": op_hours_prac, "ze_in_period": list_period_rasp,
@@ -146,6 +162,13 @@ class TableParserPlan:
         f = open(out_filename, "w")
         print("[COMPLETE] : Write json output in: ", out_filename)
         f.write(json_str_out)
+        f.close()
+
+    def savelog(self, filename):
+        print("[LOG] Count invalid discipl: ", self.__invalid_cells)
+        f = open(filename, "a")
+        print("[COMPLETE] : Write log output file: ", filename)
+        f.write(self.__err_log)
         f.close()
 
 

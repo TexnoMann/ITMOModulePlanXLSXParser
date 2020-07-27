@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 folder=$1
+logfile=$2
+
+rm "$logfile"
+touch "$logfile"
 
 while IFS= read -r line; do
   new="${line// /_}"
@@ -17,6 +21,6 @@ while IFS= read -r line; do
   type="${new##*.}"
   if [ "$type" != "json" ]
     then
-    python3 parse_json.py -in "$new" -out "$full_name.json"
+    python3 parse_json.py -in "$new" -out "$full_name.json" -log "$logfile"
   fi
 done < <(find "$folder" -type f -not -name '.*')
