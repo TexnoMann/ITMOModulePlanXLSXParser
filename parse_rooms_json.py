@@ -18,7 +18,6 @@ def main():
 
     rp = RoomsParser(input_filename, rooms_info, time_config)
     rp.parseRoomsTable()
-    # rp.parse()
     rp.save(output_filename)
 
 

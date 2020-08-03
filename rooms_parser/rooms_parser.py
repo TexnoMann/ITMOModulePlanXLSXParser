@@ -91,7 +91,7 @@ class RoomsParser:
                                 start_finish_times = self.__stringToSFTime(time_row)
                                 for k in range(0, len(self.__time_period_list)):
                                     if start_finish_times[0]<=self.__time_period_list[k] and start_finish_times[1]>self.__time_period_list[k] :
-                                        rooms_busy_info ={"r_id":self.__rooms_info[building_id][h], "room_number": h, "day": time_row_index, "pairIndex": k, "comment": self.__comment_info}
+                                        rooms_busy_info ={"r_id":self.__rooms_info[building_id][h], "room_number": h, "day": time_row_index, "pairIndex": k+1, "comment": self.__comment_info}
                                         self.__rooms_busy_list.append(rooms_busy_info)
                         print("[PROCESSING] : Write info about room ", h)
                     else:

@@ -1,5 +1,6 @@
 /data/
 /table_parser/__pycache__/
 /rooms_parser/__pycache__/
+/lessons_parser/__pycache__/
 errors.log
 out_data.zip
